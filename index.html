@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>3D Hybrid Transformation using Three.js</title>
+  <style>
+    body { margin: 0; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+  <script>
+    // 1. Scene, Camera, Renderer
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xeeeeee);
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera.position.set(3, 3, 5);
+
+    const renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // 2. Create a cube (or any 3D object)
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshNormalMaterial({wireframe: false});
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+
+    // 3. Helper: Axes
+    const axesHelper = new THREE.AxesHelper(3);
+    scene.add(axesHelper);
+
+    // 4. Transformation matrices using THREE.Matrix4 (homogeneous coordinates)
+    const translationMatrix = new THREE.Matrix4().makeTranslation(1, 1, 0);   // Translate by (1,1,0)
+    const scalingMatrix = new THREE.Matrix4().makeScale(2, 1.5, 1);           // Scale X by 2, Y by 1.5
+    const rotationMatrix = new THREE.Matrix4().makeRotationY(Math.PI / 4);    // Rotate 45 deg around Y
+    const reflectionMatrix = new THREE.Matrix4().set(
+        -1, 0, 0, 0,
+         0, 1, 0, 0,
+         0, 0, 1, 0,
+         0, 0, 0, 1
+    ); // Reflect across YZ-plane (invert X)
+    
+    const shearingMatrix = new THREE.Matrix4().set(
+        1, 0.5, 0, 0,  // shear XY
+        0, 1, 0.3, 0,  // shear YZ
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    );
+
+    // 5. Apply hybrid transformation
+    const hybridMatrix = new THREE.Matrix4();
+    hybridMatrix.multiply(translationMatrix)
+                .multiply(scalingMatrix)
+                .multiply(rotationMatrix)
+                .multiply(reflectionMatrix)
+                .multiply(shearingMatrix);
+
+    cube.applyMatrix4(hybridMatrix);
+
+    // 6. Render loop
+    function animate() {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // 7. Responsive
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
