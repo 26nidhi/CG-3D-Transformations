@@ -7,212 +7,287 @@
     <style>
         body {
             margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e6ed;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             overflow: hidden;
-            font-family: Arial, sans-serif;
-            background: #1a1a1a;
-            color: white;
-        }
-        
-        canvas {
-            display: block;
         }
         
         #controls {
             position: absolute;
             top: 10px;
             left: 10px;
-            background: rgba(0, 0, 0, 0.8);
+            background: linear-gradient(145deg, rgba(15,15,35,0.95), rgba(26,26,46,0.9));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(100, 150, 255, 0.2);
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            max-width: 300px;
-            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            max-width: 360px;
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
         }
         
         .control-group {
-            margin-bottom: 15px;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
+            margin-bottom: 16px;
+            padding: 16px;
+            border: 1px solid rgba(100, 150, 255, 0.15);
+            border-radius: 12px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
         
-        .control-group h3 {
-            margin: 0 0 10px 0;
-            color: #4CAF50;
-            font-size: 14px;
+        .control-group:hover {
+            border-color: rgba(100, 150, 255, 0.3);
+            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            transform: translateY(-1px);
+        }
+        
+        .control-group h4 {
+            margin: 0 0 12px 0;
+            color: #64b5f6;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
         }
         
         button {
-            margin: 2px;
-            padding: 8px 12px;
-            cursor: pointer;
-            border: none;
-            border-radius: 4px;
-            background: #4CAF50;
+            background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);
             color: white;
+            border: none;
+            padding: 10px 16px;
+            margin: 3px;
+            border-radius: 8px;
+            cursor: pointer;
             font-size: 12px;
-            transition: background 0.3s;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(66, 165, 245, 0.3);
         }
         
         button:hover {
-            background: #45a049;
+            background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(66, 165, 245, 0.4);
         }
         
-        .danger {
-            background: #f44336;
-        }
-        
-        .danger:hover {
-            background: #da190b;
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(66, 165, 245, 0.3);
         }
         
         input, select {
+            background: rgba(15,15,35,0.8);
+            color: #e0e6ed;
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            padding: 6px 8px;
             margin: 2px;
-            padding: 5px;
-            border: 1px solid #555;
-            border-radius: 3px;
-            background: #333;
-            color: white;
-            font-size: 11px;
+            border-radius: 6px;
+            width: 60px;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #64b5f6;
+            box-shadow: 0 0 0 2px rgba(100, 181, 246, 0.2);
         }
         
         label {
             font-size: 12px;
-            color: #ccc;
+            margin-right: 6px;
+            color: #b3c5d1;
+            font-weight: 500;
         }
         
         #matrixDisplay {
+            background: linear-gradient(135deg, rgba(15,15,35,0.9), rgba(26,26,46,0.8));
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Fira Code', 'Monaco', 'Cascadia Code', monospace;
+            font-size: 10px;
+            white-space: pre;
+            max-height: 200px;
+            overflow: auto;
+            color: #81c784;
+            line-height: 1.4;
+        }
+        
+        #objectSelect {
+            width: 130px;
+            background: linear-gradient(135deg, rgba(15,15,35,0.9), rgba(26,26,46,0.8));
+        }
+        
+        .axis-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
+            padding: 8px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 6px;
+            border: 1px solid rgba(100, 150, 255, 0.1);
+        }
+        
+        #info {
             position: absolute;
             bottom: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 11px;
-            color: #4CAF50;
-            backdrop-filter: blur(10px);
-        }
-        
-        #objectInfo {
-            position: absolute;
-            top: 10px;
             right: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px;
-            border-radius: 8px;
-            backdrop-filter: blur(10px);
-            max-width: 200px;
+            background: linear-gradient(145deg, rgba(15,15,35,0.95), rgba(26,26,46,0.9));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         
-        .axis-input {
-            width: 50px;
+        /* Scrollbar styling */
+        #controls::-webkit-scrollbar {
+            width: 6px;
         }
         
-        .transformation-history {
-            max-height: 150px;
-            overflow-y: auto;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 5px;
+        #controls::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
             border-radius: 3px;
-            margin-top: 10px;
+        }
+        
+        #controls::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #42a5f5, #1e88e5);
+            border-radius: 3px;
+        }
+        
+        #controls::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #1e88e5, #1565c0);
+        }
+        
+        /* Special button styles */
+        button[onclick*="Hybrid"] {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        }
+        
+        button[onclick*="Hybrid"]:hover {
+            background: linear-gradient(135deg, #ee5a52 0%, #d63447 100%);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+        
+        button[onclick*="Reset"] {
+            background: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%);
+            box-shadow: 0 4px 12px rgba(255, 167, 38, 0.3);
+        }
+        
+        button[onclick*="Reset"]:hover {
+            background: linear-gradient(135deg, #fb8c00 0%, #ef6c00 100%);
+            box-shadow: 0 6px 20px rgba(255, 167, 38, 0.4);
         }
     </style>
 </head>
 <body>
     <div id="controls">
-        <!-- Object Selection -->
         <div class="control-group">
-            <h3>Object Selection</h3>
-            <select id="objectType">
+            <h4>Object Selection</h4>
+            <select id="objectSelect">
                 <option value="cube">Cube</option>
                 <option value="sphere">Sphere</option>
                 <option value="cylinder">Cylinder</option>
                 <option value="cone">Cone</option>
                 <option value="torus">Torus</option>
+                <option value="pyramid">Pyramid</option>
             </select>
             <button onclick="createObject()">Create Object</button>
         </div>
 
-        <!-- Translation -->
         <div class="control-group">
-            <h3>Translation</h3>
-            <label>X:</label><input type="number" id="transX" value="50" class="axis-input">
-            <label>Y:</label><input type="number" id="transY" value="30" class="axis-input">
-            <label>Z:</label><input type="number" id="transZ" value="20" class="axis-input">
-            <button onclick="applyTranslation()">Translate</button>
+            <h4>Translation</h4>
+            <div class="axis-controls">
+                <label>X:</label><input type="number" id="transX" value="50" step="10">
+                <label>Y:</label><input type="number" id="transY" value="0" step="10">
+                <label>Z:</label><input type="number" id="transZ" value="0" step="10">
+            </div>
+            <button onclick="applyTransformation('translate')">Translate</button>
         </div>
 
-        <!-- Scaling -->
         <div class="control-group">
-            <h3>Scaling</h3>
-            <label>X:</label><input type="number" id="scaleX" value="1.5" step="0.1" class="axis-input">
-            <label>Y:</label><input type="number" id="scaleY" value="1.2" step="0.1" class="axis-input">
-            <label>Z:</label><input type="number" id="scaleZ" value="0.8" step="0.1" class="axis-input">
-            <button onclick="applyScaling()">Scale</button>
+            <h4>Scaling</h4>
+            <div class="axis-controls">
+                <label>X:</label><input type="number" id="scaleX" value="1.5" step="0.1">
+                <label>Y:</label><input type="number" id="scaleY" value="1.5" step="0.1">
+                <label>Z:</label><input type="number" id="scaleZ" value="1.5" step="0.1">
+            </div>
+            <button onclick="applyTransformation('scale')">Scale</button>
         </div>
 
-        <!-- Rotation -->
         <div class="control-group">
-            <h3>Rotation (degrees)</h3>
-            <label>X:</label><input type="number" id="rotX" value="45" class="axis-input">
-            <label>Y:</label><input type="number" id="rotY" value="30" class="axis-input">
-            <label>Z:</label><input type="number" id="rotZ" value="15" class="axis-input">
-            <button onclick="applyRotation()">Rotate</button>
+            <h4>Rotation (degrees)</h4>
+            <div class="axis-controls">
+                <label>X:</label><input type="number" id="rotX" value="45" step="15">
+                <label>Y:</label><input type="number" id="rotY" value="0" step="15">
+                <label>Z:</label><input type="number" id="rotZ" value="0" step="15">
+            </div>
+            <button onclick="applyTransformation('rotate')">Rotate</button>
         </div>
 
-        <!-- Reflection -->
         <div class="control-group">
-            <h3>Reflection</h3>
+            <h4>Reflection</h4>
             <select id="reflectPlane">
+                <option value="x">YZ Plane (X=0)</option>
+                <option value="y">XZ Plane (Y=0)</option>
+                <option value="z">XY Plane (Z=0)</option>
                 <option value="xy">XY Plane</option>
                 <option value="xz">XZ Plane</option>
                 <option value="yz">YZ Plane</option>
-                <option value="origin">Origin</option>
             </select>
-            <button onclick="applyReflection()">Reflect</button>
+            <button onclick="applyTransformation('reflect')">Reflect</button>
         </div>
 
-        <!-- Shearing -->
         <div class="control-group">
-            <h3>Shearing</h3>
-            <select id="shearType">
-                <option value="xy">Shear XY</option>
-                <option value="xz">Shear XZ</option>
-                <option value="yz">Shear YZ</option>
-            </select>
-            <input type="number" id="shearValue" value="0.3" step="0.1" style="width:60px">
-            <button onclick="applyShear()">Shear</button>
+            <h4>Shearing</h4>
+            <div class="axis-controls">
+                <label>Sxy:</label><input type="number" id="shearXY" value="0.3" step="0.1">
+                <label>Sxz:</label><input type="number" id="shearXZ" value="0" step="0.1">
+            </div>
+            <div class="axis-controls">
+                <label>Syx:</label><input type="number" id="shearYX" value="0" step="0.1">
+                <label>Syz:</label><input type="number" id="shearYZ" value="0" step="0.1">
+            </div>
+            <div class="axis-controls">
+                <label>Szx:</label><input type="number" id="shearZX" value="0" step="0.1">
+                <label>Szy:</label><input type="number" id="shearZY" value="0" step="0.1">
+            </div>
+            <button onclick="applyTransformation('shear')">Shear</button>
         </div>
 
-        <!-- Composite Transformations -->
         <div class="control-group">
-            <h3>Composite Operations</h3>
-            <button onclick="applyHybridTransform()">Hybrid Transform</button>
-            <button onclick="resetObject()" class="danger">Reset</button>
+            <h4>Hybrid Transformation</h4>
+            <button onclick="applyHybridTransformation()">Apply All Transformations</button>
         </div>
 
-        <!-- History Controls -->
         <div class="control-group">
-            <h3>History</h3>
-            <button onclick="undoTransform()">Undo</button>
-            <button onclick="redoTransform()">Redo</button>
-            <button onclick="clearHistory()" class="danger">Clear</button>
+            <h4>Controls</h4>
+            <button onclick="saveState()">Save State</button>
+            <button onclick="undo()">Undo</button>
+            <button onclick="redo()">Redo</button>
+            <button onclick="resetObject()">Reset</button>
+        </div>
+
+        <div class="control-group">
+            <h4>Current Transformation Matrix</h4>
+            <div id="matrixDisplay"></div>
         </div>
     </div>
 
-    <div id="objectInfo">
-        <h3 style="margin-top:0;">Object Information</h3>
-        <div id="objectDetails">No object created</div>
-        <div class="transformation-history" id="transformHistory">
-            <strong>Transformation History:</strong><br>
-            <div id="historyList">None</div>
-        </div>
-    </div>
-
-    <div id="matrixDisplay">
-        <strong>Current Transformation Matrix (Homogeneous Coordinates):</strong>
-        <pre id="matrixData">Identity Matrix</pre>
+    <div id="info">
+        <strong>Controls:</strong><br>
+        Mouse: Orbit camera<br>
+        Wheel: Zoom<br>
+        Right click: Pan
     </div>
 
     <script type="module">
@@ -220,332 +295,460 @@
 
         // Scene setup
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x222222);
-        
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(200, 200, 200);
-        camera.lookAt(0, 0, 0);
+        scene.background = new THREE.Color(0x0f0f23);
+        scene.fog = new THREE.Fog(0x0f0f23, 200, 1000);
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(200, 150, 200);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
         document.body.appendChild(renderer.domElement);
 
-        // Lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+        // Enhanced lighting
+        const ambientLight = new THREE.AmbientLight(0x4169e1, 0.3);
         scene.add(ambientLight);
 
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        const directionalLight = new THREE.DirectionalLight(0x64b5f6, 1.2);
         directionalLight.position.set(100, 100, 50);
         directionalLight.castShadow = true;
         directionalLight.shadow.mapSize.width = 2048;
         directionalLight.shadow.mapSize.height = 2048;
         scene.add(directionalLight);
 
-        // Grid and axes
-        const gridHelper = new THREE.GridHelper(400, 20, 0x555555, 0x333333);
+        const pointLight = new THREE.PointLight(0xff6b9d, 0.8, 300);
+        pointLight.position.set(-100, 50, 100);
+        scene.add(pointLight);
+
+        // Enhanced grid and axes
+        const gridHelper = new THREE.GridHelper(400, 20, 0x64b5f6, 0x3949ab);
+        gridHelper.material.opacity = 0.4;
+        gridHelper.material.transparent = true;
         scene.add(gridHelper);
 
-        const axesHelper = new THREE.AxesHelper(100);
+        const axesHelper = new THREE.AxesHelper(150);
         scene.add(axesHelper);
 
-        // Object variables
+        // Camera controls (simplified orbit controls)
+        let mouseDown = false;
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+
+        // Variables
         let currentObject = null;
         let originalGeometry = null;
-        let transformationMatrix = new THREE.Matrix4().identity();
-        let transformHistory = [];
-        let redoStack = [];
-        let historyDescriptions = [];
+        let transformationHistory = [];
+        let redoHistory = [];
+        let currentMatrix = new THREE.Matrix4();
 
-        // Create object function
+        // Mouse controls
+        renderer.domElement.addEventListener('mousedown', onMouseDown);
+        renderer.domElement.addEventListener('mousemove', onMouseMove);
+        renderer.domElement.addEventListener('mouseup', onMouseUp);
+        renderer.domElement.addEventListener('wheel', onWheel);
+
+        function onMouseDown(event) {
+            mouseDown = true;
+            mouseX = event.clientX;
+            mouseY = event.clientY;
+        }
+
+        function onMouseMove(event) {
+            if (!mouseDown) return;
+            
+            const deltaX = event.clientX - mouseX;
+            const deltaY = event.clientY - mouseY;
+            
+            targetX += deltaX * 0.01;
+            targetY += deltaY * 0.01;
+            
+            mouseX = event.clientX;
+            mouseY = event.clientY;
+        }
+
+        function onMouseUp() {
+            mouseDown = false;
+        }
+
+        function onWheel(event) {
+            camera.position.multiplyScalar(event.deltaY > 0 ? 1.1 : 0.9);
+        }
+
+        // Create different 3D objects
         function createObject() {
-            // Remove existing object
             if (currentObject) {
                 scene.remove(currentObject);
-                if (currentObject.geometry) currentObject.geometry.dispose();
-                if (currentObject.material) currentObject.material.dispose();
+                currentObject.geometry.dispose();
+                currentObject.material.dispose();
             }
 
-            const objectType = document.getElementById('objectType').value;
+            const objectType = document.getElementById('objectSelect').value;
             let geometry;
 
             switch (objectType) {
                 case 'cube':
-                    geometry = new THREE.BoxGeometry(80, 60, 40);
+                    geometry = new THREE.BoxGeometry(50, 50, 50);
                     break;
                 case 'sphere':
-                    geometry = new THREE.SphereGeometry(50, 32, 16);
+                    geometry = new THREE.SphereGeometry(30, 32, 16);
                     break;
                 case 'cylinder':
-                    geometry = new THREE.CylinderGeometry(40, 40, 80, 32);
+                    geometry = new THREE.CylinderGeometry(25, 25, 50, 32);
                     break;
                 case 'cone':
-                    geometry = new THREE.ConeGeometry(50, 80, 32);
+                    geometry = new THREE.ConeGeometry(25, 50, 32);
                     break;
                 case 'torus':
-                    geometry = new THREE.TorusGeometry(50, 20, 16, 100);
+                    geometry = new THREE.TorusGeometry(30, 10, 16, 100);
                     break;
+                case 'pyramid':
+                    geometry = new THREE.ConeGeometry(30, 50, 4);
+                    break;
+                default:
+                    geometry = new THREE.BoxGeometry(50, 50, 50);
             }
 
-            const material = new THREE.MeshLambertMaterial({ 
-                color: 0x4CAF50,
-                transparent: true,
-                opacity: 0.8
-            });
+            const materials = [
+                new THREE.MeshPhysicalMaterial({ 
+                    color: 0x64b5f6,
+                    metalness: 0.3,
+                    roughness: 0.4,
+                    transparent: true,
+                    opacity: 0.9,
+                    envMapIntensity: 1.0
+                }),
+                new THREE.MeshPhysicalMaterial({ 
+                    color: 0xff6b9d,
+                    metalness: 0.2,
+                    roughness: 0.3,
+                    transparent: true,
+                    opacity: 0.9,
+                    envMapIntensity: 1.0
+                }),
+                new THREE.MeshPhysicalMaterial({ 
+                    color: 0x81c784,
+                    metalness: 0.4,
+                    roughness: 0.2,
+                    transparent: true,
+                    opacity: 0.9,
+                    envMapIntensity: 1.0
+                }),
+                new THREE.MeshPhysicalMaterial({ 
+                    color: 0xffa726,
+                    metalness: 0.1,
+                    roughness: 0.5,
+                    transparent: true,
+                    opacity: 0.9,
+                    envMapIntensity: 1.0
+                }),
+                new THREE.MeshPhysicalMaterial({ 
+                    color: 0xba68c8,
+                    metalness: 0.6,
+                    roughness: 0.1,
+                    transparent: true,
+                    opacity: 0.9,
+                    envMapIntensity: 1.0
+                }),
+                new THREE.MeshPhysicalMaterial({ 
+                    color: 0xff5722,
+                    metalness: 0.3,
+                    roughness: 0.3,
+                    transparent: true,
+                    opacity: 0.9,
+                    envMapIntensity: 1.0
+                })
+            ];
+
+            const materialIndex = Math.floor(Math.random() * materials.length);
+            const material = materials[materialIndex];
 
             currentObject = new THREE.Mesh(geometry, material);
             currentObject.castShadow = true;
             currentObject.receiveShadow = true;
+            
             scene.add(currentObject);
-
+            
+            // Store original geometry for reset
+            originalGeometry = geometry.clone();
+            
             // Reset transformation matrix
-            transformationMatrix.identity();
-            transformHistory = [];
-            redoStack = [];
-            historyDescriptions = [];
-
-            updateObjectInfo();
-            updateMatrixDisplay();
-            updateHistoryDisplay();
-        }
-
-        // Transformation functions using homogeneous coordinates
-        function applyTranslation() {
-            if (!currentObject) return;
-
-            saveCurrentState();
-
-            const tx = parseFloat(document.getElementById('transX').value) || 0;
-            const ty = parseFloat(document.getElementById('transY').value) || 0;
-            const tz = parseFloat(document.getElementById('transZ').value) || 0;
-
-            const translationMatrix = new THREE.Matrix4().makeTranslation(tx, ty, tz);
+            currentMatrix.identity();
+            transformationHistory = [];
+            redoHistory = [];
             
-            transformationMatrix.premultiply(translationMatrix);
-            currentObject.matrix.copy(transformationMatrix);
-            currentObject.matrixAutoUpdate = false;
-
-            historyDescriptions.push(`Translation: (${tx}, ${ty}, ${tz})`);
             updateMatrixDisplay();
-            updateHistoryDisplay();
         }
 
-        function applyScaling() {
-            if (!currentObject) return;
+        // Create transformation matrices using homogeneous coordinates
+        function createTranslationMatrix(tx, ty, tz) {
+            return new THREE.Matrix4().set(
+                1, 0, 0, tx,
+                0, 1, 0, ty,
+                0, 0, 1, tz,
+                0, 0, 0, 1
+            );
+        }
 
-            saveCurrentState();
+        function createScaleMatrix(sx, sy, sz) {
+            return new THREE.Matrix4().set(
+                sx, 0, 0, 0,
+                0, sy, 0, 0,
+                0, 0, sz, 0,
+                0, 0, 0, 1
+            );
+        }
 
-            const sx = parseFloat(document.getElementById('scaleX').value) || 1;
-            const sy = parseFloat(document.getElementById('scaleY').value) || 1;
-            const sz = parseFloat(document.getElementById('scaleZ').value) || 1;
+        function createRotationMatrixX(angle) {
+            const c = Math.cos(angle);
+            const s = Math.sin(angle);
+            return new THREE.Matrix4().set(
+                1, 0, 0, 0,
+                0, c, -s, 0,
+                0, s, c, 0,
+                0, 0, 0, 1
+            );
+        }
 
-            const scalingMatrix = new THREE.Matrix4().makeScale(sx, sy, sz);
+        function createRotationMatrixY(angle) {
+            const c = Math.cos(angle);
+            const s = Math.sin(angle);
+            return new THREE.Matrix4().set(
+                c, 0, s, 0,
+                0, 1, 0, 0,
+                -s, 0, c, 0,
+                0, 0, 0, 1
+            );
+        }
+
+        function createRotationMatrixZ(angle) {
+            const c = Math.cos(angle);
+            const s = Math.sin(angle);
+            return new THREE.Matrix4().set(
+                c, -s, 0, 0,
+                s, c, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1
+            );
+        }
+
+        function createReflectionMatrix(plane) {
+            switch (plane) {
+                case 'x': // YZ plane (reflect across X)
+                    return new THREE.Matrix4().set(-1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
+                case 'y': // XZ plane (reflect across Y)
+                    return new THREE.Matrix4().set(1,0,0,0, 0,-1,0,0, 0,0,1,0, 0,0,0,1);
+                case 'z': // XY plane (reflect across Z)
+                    return new THREE.Matrix4().set(1,0,0,0, 0,1,0,0, 0,0,-1,0, 0,0,0,1);
+                case 'xy': // XY plane
+                    return new THREE.Matrix4().set(1,0,0,0, 0,1,0,0, 0,0,-1,0, 0,0,0,1);
+                case 'xz': // XZ plane
+                    return new THREE.Matrix4().set(1,0,0,0, 0,-1,0,0, 0,0,1,0, 0,0,0,1);
+                case 'yz': // YZ plane
+                    return new THREE.Matrix4().set(-1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
+                default:
+                    return new THREE.Matrix4().identity();
+            }
+        }
+
+        function createShearMatrix(sxy, sxz, syx, syz, szx, szy) {
+            return new THREE.Matrix4().set(
+                1, sxy, sxz, 0,
+                syx, 1, syz, 0,
+                szx, szy, 1, 0,
+                0, 0, 0, 1
+            );
+        }
+
+        // Apply individual transformations
+        function applyTransformation(type) {
+            if (!currentObject) {
+                alert('Please create an object first!');
+                return;
+            }
+
+            saveState();
+            let matrix;
+
+            switch (type) {
+                case 'translate':
+                    const tx = parseFloat(document.getElementById('transX').value);
+                    const ty = parseFloat(document.getElementById('transY').value);
+                    const tz = parseFloat(document.getElementById('transZ').value);
+                    matrix = createTranslationMatrix(tx, ty, tz);
+                    break;
+
+                case 'scale':
+                    const sx = parseFloat(document.getElementById('scaleX').value);
+                    const sy = parseFloat(document.getElementById('scaleY').value);
+                    const sz = parseFloat(document.getElementById('scaleZ').value);
+                    matrix = createScaleMatrix(sx, sy, sz);
+                    break;
+
+                case 'rotate':
+                    const rx = parseFloat(document.getElementById('rotX').value) * Math.PI / 180;
+                    const ry = parseFloat(document.getElementById('rotY').value) * Math.PI / 180;
+                    const rz = parseFloat(document.getElementById('rotZ').value) * Math.PI / 180;
+                    
+                    const matrixX = createRotationMatrixX(rx);
+                    const matrixY = createRotationMatrixY(ry);
+                    const matrixZ = createRotationMatrixZ(rz);
+                    
+                    matrix = new THREE.Matrix4()
+                        .multiplyMatrices(matrixZ, matrixY)
+                        .multiply(matrixX);
+                    break;
+
+                case 'reflect':
+                    const plane = document.getElementById('reflectPlane').value;
+                    matrix = createReflectionMatrix(plane);
+                    break;
+
+                case 'shear':
+                    const sxy = parseFloat(document.getElementById('shearXY').value);
+                    const sxz = parseFloat(document.getElementById('shearXZ').value);
+                    const syx = parseFloat(document.getElementById('shearYX').value);
+                    const syz = parseFloat(document.getElementById('shearYZ').value);
+                    const szx = parseFloat(document.getElementById('shearZX').value);
+                    const szy = parseFloat(document.getElementById('shearZY').value);
+                    matrix = createShearMatrix(sxy, sxz, syx, syz, szx, szy);
+                    break;
+            }
+
+            if (matrix) {
+                currentObject.applyMatrix4(matrix);
+                currentMatrix.multiplyMatrices(matrix, currentMatrix);
+                updateMatrixDisplay();
+            }
+        }
+
+        // Apply hybrid transformation (all transformations combined)
+        function applyHybridTransformation() {
+            if (!currentObject) {
+                alert('Please create an object first!');
+                return;
+            }
+
+            saveState();
+
+            // Create all transformation matrices
+            const tx = parseFloat(document.getElementById('transX').value);
+            const ty = parseFloat(document.getElementById('transY').value);
+            const tz = parseFloat(document.getElementById('transZ').value);
+            const translationMatrix = createTranslationMatrix(tx, ty, tz);
+
+            const sx = parseFloat(document.getElementById('scaleX').value);
+            const sy = parseFloat(document.getElementById('scaleY').value);
+            const sz = parseFloat(document.getElementById('scaleZ').value);
+            const scaleMatrix = createScaleMatrix(sx, sy, sz);
+
+            const rx = parseFloat(document.getElementById('rotX').value) * Math.PI / 180;
+            const ry = parseFloat(document.getElementById('rotY').value) * Math.PI / 180;
+            const rz = parseFloat(document.getElementById('rotZ').value) * Math.PI / 180;
             
-            transformationMatrix.premultiply(scalingMatrix);
-            currentObject.matrix.copy(transformationMatrix);
-
-            historyDescriptions.push(`Scaling: (${sx}, ${sy}, ${sz})`);
-            updateMatrixDisplay();
-            updateHistoryDisplay();
-        }
-
-        function applyRotation() {
-            if (!currentObject) return;
-
-            saveCurrentState();
-
-            const rx = THREE.MathUtils.degToRad(parseFloat(document.getElementById('rotX').value) || 0);
-            const ry = THREE.MathUtils.degToRad(parseFloat(document.getElementById('rotY').value) || 0);
-            const rz = THREE.MathUtils.degToRad(parseFloat(document.getElementById('rotZ').value) || 0);
-
-            const rotationMatrix = new THREE.Matrix4();
-            rotationMatrix.makeRotationFromEuler(new THREE.Euler(rx, ry, rz));
-            
-            transformationMatrix.premultiply(rotationMatrix);
-            currentObject.matrix.copy(transformationMatrix);
-
-            const degrees = `(${document.getElementById('rotX').value}°, ${document.getElementById('rotY').value}°, ${document.getElementById('rotZ').value}°)`;
-            historyDescriptions.push(`Rotation: ${degrees}`);
-            updateMatrixDisplay();
-            updateHistoryDisplay();
-        }
-
-        function applyReflection() {
-            if (!currentObject) return;
-
-            saveCurrentState();
+            const rotationMatrixX = createRotationMatrixX(rx);
+            const rotationMatrixY = createRotationMatrixY(ry);
+            const rotationMatrixZ = createRotationMatrixZ(rz);
+            const rotationMatrix = new THREE.Matrix4()
+                .multiplyMatrices(rotationMatrixZ, rotationMatrixY)
+                .multiply(rotationMatrixX);
 
             const plane = document.getElementById('reflectPlane').value;
-            const reflectionMatrix = new THREE.Matrix4();
+            const reflectionMatrix = createReflectionMatrix(plane);
 
-            switch (plane) {
-                case 'xy':
-                    reflectionMatrix.set(1,0,0,0, 0,1,0,0, 0,0,-1,0, 0,0,0,1);
-                    break;
-                case 'xz':
-                    reflectionMatrix.set(1,0,0,0, 0,-1,0,0, 0,0,1,0, 0,0,0,1);
-                    break;
-                case 'yz':
-                    reflectionMatrix.set(-1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
-                    break;
-                case 'origin':
-                    reflectionMatrix.set(-1,0,0,0, 0,-1,0,0, 0,0,-1,0, 0,0,0,1);
-                    break;
-            }
+            const sxy = parseFloat(document.getElementById('shearXY').value);
+            const sxz = parseFloat(document.getElementById('shearXZ').value);
+            const syx = parseFloat(document.getElementById('shearYX').value);
+            const syz = parseFloat(document.getElementById('shearYZ').value);
+            const szx = parseFloat(document.getElementById('shearZX').value);
+            const szy = parseFloat(document.getElementById('shearZY').value);
+            const shearMatrix = createShearMatrix(sxy, sxz, syx, syz, szx, szy);
 
-            transformationMatrix.premultiply(reflectionMatrix);
-            currentObject.matrix.copy(transformationMatrix);
+            // Combine all transformations: T * R * S * Sh * Rf
+            const hybridMatrix = new THREE.Matrix4()
+                .multiplyMatrices(translationMatrix, rotationMatrix)
+                .multiply(scaleMatrix)
+                .multiply(shearMatrix)
+                .multiply(reflectionMatrix);
 
-            historyDescriptions.push(`Reflection: ${plane.toUpperCase()} plane`);
+            currentObject.applyMatrix4(hybridMatrix);
+            currentMatrix.multiplyMatrices(hybridMatrix, currentMatrix);
             updateMatrixDisplay();
-            updateHistoryDisplay();
         }
 
-        function applyShear() {
-            if (!currentObject) return;
-
-            saveCurrentState();
-
-            const shearType = document.getElementById('shearType').value;
-            const shearValue = parseFloat(document.getElementById('shearValue').value) || 0;
-            const shearMatrix = new THREE.Matrix4();
-
-            switch (shearType) {
-                case 'xy':
-                    shearMatrix.set(1,shearValue,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
-                    break;
-                case 'xz':
-                    shearMatrix.set(1,0,shearValue,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
-                    break;
-                case 'yz':
-                    shearMatrix.set(1,0,0,0, 0,1,shearValue,0, 0,0,1,0, 0,0,0,1);
-                    break;
-            }
-
-            transformationMatrix.premultiply(shearMatrix);
-            currentObject.matrix.copy(transformationMatrix);
-
-            historyDescriptions.push(`Shear ${shearType.toUpperCase()}: ${shearValue}`);
-            updateMatrixDisplay();
-            updateHistoryDisplay();
-        }
-
-        function applyHybridTransform() {
-            if (!currentObject) return;
-
-            saveCurrentState();
-
-            // Composite transformation: Translate -> Scale -> Rotate
-            const tx = 30, ty = 20, tz = 10;
-            const sx = 1.2, sy = 1.1, sz = 0.9;
-            const rx = THREE.MathUtils.degToRad(20);
-            const ry = THREE.MathUtils.degToRad(15);
-            const rz = THREE.MathUtils.degToRad(10);
-
-            const translationMatrix = new THREE.Matrix4().makeTranslation(tx, ty, tz);
-            const scalingMatrix = new THREE.Matrix4().makeScale(sx, sy, sz);
-            const rotationMatrix = new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(rx, ry, rz));
-
-            // Apply in sequence: T * S * R
-            const hybridMatrix = new THREE.Matrix4();
-            hybridMatrix.multiplyMatrices(translationMatrix, scalingMatrix);
-            hybridMatrix.multiply(rotationMatrix);
-
-            transformationMatrix.premultiply(hybridMatrix);
-            currentObject.matrix.copy(transformationMatrix);
-
-            historyDescriptions.push('Hybrid: Translate→Scale→Rotate');
-            updateMatrixDisplay();
-            updateHistoryDisplay();
-        }
-
-        function saveCurrentState() {
+        // History management
+        function saveState() {
             if (currentObject) {
-                transformHistory.push(transformationMatrix.clone());
-                redoStack = []; // Clear redo stack when new transformation is applied
+                transformationHistory.push({
+                    matrix: currentObject.matrix.clone(),
+                    currentMatrix: currentMatrix.clone()
+                });
+                redoHistory = [];
             }
         }
 
-        function undoTransform() {
-            if (!currentObject || transformHistory.length === 0) return;
-
-            redoStack.push(transformationMatrix.clone());
-            transformationMatrix = transformHistory.pop();
-            currentObject.matrix.copy(transformationMatrix);
-            
-            historyDescriptions.pop();
-            updateMatrixDisplay();
-            updateHistoryDisplay();
+        function undo() {
+            if (currentObject && transformationHistory.length > 0) {
+                redoHistory.push({
+                    matrix: currentObject.matrix.clone(),
+                    currentMatrix: currentMatrix.clone()
+                });
+                
+                const lastState = transformationHistory.pop();
+                currentObject.matrix.copy(lastState.matrix);
+                currentMatrix.copy(lastState.currentMatrix);
+                currentObject.matrix.decompose(currentObject.position, currentObject.quaternion, currentObject.scale);
+                updateMatrixDisplay();
+            }
         }
 
-        function redoTransform() {
-            if (!currentObject || redoStack.length === 0) return;
-
-            transformHistory.push(transformationMatrix.clone());
-            transformationMatrix = redoStack.pop();
-            currentObject.matrix.copy(transformationMatrix);
-            
-            updateMatrixDisplay();
-            updateHistoryDisplay();
+        function redo() {
+            if (currentObject && redoHistory.length > 0) {
+                transformationHistory.push({
+                    matrix: currentObject.matrix.clone(),
+                    currentMatrix: currentMatrix.clone()
+                });
+                
+                const nextState = redoHistory.pop();
+                currentObject.matrix.copy(nextState.matrix);
+                currentMatrix.copy(nextState.currentMatrix);
+                currentObject.matrix.decompose(currentObject.position, currentObject.quaternion, currentObject.scale);
+                updateMatrixDisplay();
+            }
         }
 
         function resetObject() {
-            if (!currentObject) return;
-
-            transformationMatrix.identity();
-            currentObject.matrix.copy(transformationMatrix);
-            currentObject.matrixAutoUpdate = false;
-            
-            transformHistory = [];
-            redoStack = [];
-            historyDescriptions = [];
-            
-            updateMatrixDisplay();
-            updateHistoryDisplay();
-        }
-
-        function clearHistory() {
-            transformHistory = [];
-            redoStack = [];
-            historyDescriptions = [];
-            updateHistoryDisplay();
-        }
-
-        function updateMatrixDisplay() {
-            const elements = transformationMatrix.elements;
-            let matrixStr = '';
-            
-            // Display as 4x4 homogeneous coordinate matrix
-            for (let i = 0; i < 4; i++) {
-                const row = [];
-                for (let j = 0; j < 4; j++) {
-                    row.push(elements[j * 4 + i].toFixed(2));
-                }
-                matrixStr += row.join('  ') + '\n';
+            if (currentObject && originalGeometry) {
+                currentObject.position.set(0, 0, 0);
+                currentObject.rotation.set(0, 0, 0);
+                currentObject.scale.set(1, 1, 1);
+                currentObject.matrix.identity();
+                currentMatrix.identity();
+                transformationHistory = [];
+                redoHistory = [];
+                updateMatrixDisplay();
             }
-            
-            document.getElementById('matrixData').textContent = matrixStr;
         }
 
-        function updateObjectInfo() {
-            const objectType = document.getElementById('objectType').value;
-            const details = `
-                Type: ${objectType.charAt(0).toUpperCase() + objectType.slice(1)}
-                Vertices: ${currentObject ? currentObject.geometry.attributes.position.count : 0}
-                Transformations Applied: ${historyDescriptions.length}
-            `;
-            document.getElementById('objectDetails').innerHTML = details.replace(/\n/g, '<br>');
-        }
-
-        function updateHistoryDisplay() {
-            const historyList = document.getElementById('historyList');
-            if (historyDescriptions.length === 0) {
-                historyList.innerHTML = 'None';
-            } else {
-                historyList.innerHTML = historyDescriptions.map((desc, index) => 
-                    `${index + 1}. ${desc}`
-                ).join('<br>');
+        // Update matrix display
+        function updateMatrixDisplay() {
+            if (currentObject) {
+                const m = currentObject.matrix.elements;
+                let matrixStr = "Transformation Matrix (4x4):\n";
+                for (let i = 0; i < 4; i++) {
+                    const row = [];
+                    for (let j = 0; j < 4; j++) {
+                        row.push(m[j * 4 + i].toFixed(3));
+                    }
+                    matrixStr += row.join("\t") + "\n";
+                }
+                document.getElementById('matrixDisplay').textContent = matrixStr;
             }
         }
 
@@ -553,11 +756,11 @@
         function animate() {
             requestAnimationFrame(animate);
             
-            // Rotate camera around the scene
-            const time = Date.now() * 0.0005;
-            camera.position.x = Math.cos(time) * 300;
-            camera.position.z = Math.sin(time) * 300;
-            camera.lookAt(0, 0, 0);
+            // Smooth camera rotation
+            camera.position.x = Math.cos(targetX) * Math.cos(targetY) * 200;
+            camera.position.y = Math.sin(targetY) * 200;
+            camera.position.z = Math.sin(targetX) * Math.cos(targetY) * 200;
+            camera.lookAt(scene.position);
             
             renderer.render(scene, camera);
         }
@@ -569,24 +772,18 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // Make functions globally available
+        // Expose functions to global scope
         window.createObject = createObject;
-        window.applyTranslation = applyTranslation;
-        window.applyScaling = applyScaling;
-        window.applyRotation = applyRotation;
-        window.applyReflection = applyReflection;
-        window.applyShear = applyShear;
-        window.applyHybridTransform = applyHybridTransform;
-        window.undoTransform = undoTransform;
-        window.redoTransform = redoTransform;
+        window.applyTransformation = applyTransformation;
+        window.applyHybridTransformation = applyHybridTransformation;
+        window.saveState = saveState;
+        window.undo = undo;
+        window.redo = redo;
         window.resetObject = resetObject;
-        window.clearHistory = clearHistory;
 
-        // Start animation
-        animate();
-
-        // Create initial cube
+        // Initialize with a cube
         createObject();
+        animate();
     </script>
 </body>
 </html>
